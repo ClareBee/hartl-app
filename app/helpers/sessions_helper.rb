@@ -9,7 +9,7 @@ module SessionsHelper
     cookies.permanent[:remember_token] = user.remember_token
   end
   def current_user
-    # note that this is an assignment 
+    # note that this is an assignment
     if (user_id = session[:user_id])
      @current_user ||= User.find_by(id: session[:user_id])
    elsif (user_id = cookies.signed[:user_id])
@@ -25,7 +25,15 @@ module SessionsHelper
     !current_user.nil?
   end
 
+  # forgets a persistent session
+  def forget(user)
+    user.forget
+    cookies.delete(:user_id)
+    cookies.delete(:remember_token)
+  end
+
   def log_out
+    forget(current_user)
     session.delete(:user_id)
     @current_user = nil
   end
