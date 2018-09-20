@@ -34,6 +34,8 @@ gem 'popper_js', '~> 1.14', '>= 1.14.3'
 # gem 'mini_magick', '~> 4.8'
 gem 'bcrypt', '~> 3.1', '>= 3.1.12'
 gem 'faker', '~> 1.6', '>= 1.6.6'
+gem 'will_paginate',           '3.1.6'
+gem 'bootstrap-will_paginate', '1.0.0'
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
