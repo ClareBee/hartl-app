@@ -8,6 +8,9 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", help_path
     assert_select "a[href=?]", about_path
     assert_select "a[href=?]", contact_path
+    log_in_as users(:michael)
+    get root_path
+    assert_select "a[href=?]", logout_path
     get contact_path
     assert_select "title", full_title("Contact")
     get signup_path
