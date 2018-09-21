@@ -42,6 +42,7 @@ class UsersController < ApplicationController
   private
 
     def user_params
+      # admin isn't in list of permitted attributes therefore can't be edited
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
 
