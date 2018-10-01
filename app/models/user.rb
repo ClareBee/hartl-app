@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   attr_accessor :remember_token, :activation_token
 
-  before_save { email.downcase! }
+  before_save :downcase_email
   before_create :create_activation_digest
 
   validates :name, presence: true, length: { maximum: 49 }
@@ -48,6 +48,7 @@ class User < ApplicationRecord
    def activate
      update_attribute(:activated, true)
      update_attribute(:activated_at, Time.zone.now)
+    #  update_columns(activated: true, activated_at: Time.zone.now)
    end
 
    def send_activation_email
@@ -58,6 +59,10 @@ class User < ApplicationRecord
     def create_activation_digest
       self.activation_token = User.new_token
       self.activation_digest = User.digest(activation_token)
+    end
+
+    def downcase_email
+      self.email = email.downcase
     end
 
 end
