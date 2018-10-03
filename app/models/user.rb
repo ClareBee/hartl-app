@@ -33,34 +33,45 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, User.digest(remember_token))
   end
 
-    # Returns true if the given token matches the digest. 'self' omitted (as inside user model)
-   def authenticated?(attribute, token)
-     digest = send("#{attribute}_digest")
-     return false if digest.nil?
-     BCrypt::Password.new(digest).is_password?(token)
-   end
+  # Returns true if the given token matches the digest. 'self' omitted (as inside user model)
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?
+    BCrypt::Password.new(digest).is_password?(token)
+  end
 
-   # forgets user
-   def forget
-     update_attribute(:remember_digest, nil)
-   end
+  # forgets user
+  def forget
+    update_attribute(:remember_digest, nil)
+  end
 
-   def activate
-     update_attribute(:activated, true)
-     update_attribute(:activated_at, Time.zone.now)
-    #  update_columns(activated: true, activated_at: Time.zone.now)
-   end
+  def activate
+    update_attribute(:activated, true)
+    update_attribute(:activated_at, Time.zone.now)
+  # update_columns(activated: true, activated_at: Time.zone.now)
+  end
 
-   def send_activation_email
-     UserMailer.account_activation(self).deliver_now
-   end
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+
+  # Returns true if a password reset has expired.
+  def password_reset_expired?
+    reset_sent_at < 2.hours.ago
+  end
+
+  def create_reset_digest
+    self.reset_token = User.new_token
+    update_attribute(:reset_digest, User.digest(reset_token))
+    update_attribute(:reset_sent_at, Time.zone.now)
+  end
 
   # Sends password reset email.
   def send_password_reset_email
     UserMailer.password_reset(self).deliver_now
   end
 
-   private
+  private
     def create_activation_digest
       self.activation_token = User.new_token
       self.activation_digest = User.digest(activation_token)
@@ -69,5 +80,4 @@ class User < ApplicationRecord
     def downcase_email
       self.email = email.downcase
     end
-
 end
