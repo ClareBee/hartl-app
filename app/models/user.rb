@@ -68,6 +68,12 @@ class User < ApplicationRecord
     UserMailer.password_reset(self).deliver_now
   end
 
+  # defines a proto-feed
+  def feed
+    # question mark ensures id is properly escaped before being included in SQL query (vs SQL injection)
+    Micropost.where("user_id = ?", id)
+  end
+
   private
     def create_activation_digest
       self.activation_token = User.new_token
