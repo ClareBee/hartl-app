@@ -77,10 +77,12 @@ class User < ApplicationRecord
     UserMailer.password_reset(self).deliver_now
   end
 
-  # defines a proto-feed
   def feed
-    # question mark ensures id is properly escaped before being included in SQL query (vs SQL injection)
-    Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+    # uses subselect to push logic into db for more efficiency
+    following_ids = "SELECT followed_id FROM relationships
+                    WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids})
+                    OR user_id = :user_id", user_id: id)
   end
 
   # follows a user
