@@ -80,7 +80,7 @@ class User < ApplicationRecord
   # defines a proto-feed
   def feed
     # question mark ensures id is properly escaped before being included in SQL query (vs SQL injection)
-    Micropost.where("user_id = ?", id)
+    Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
   end
 
   # follows a user
